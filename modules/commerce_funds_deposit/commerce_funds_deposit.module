@@ -116,11 +116,11 @@ function commerce_funds_deposit_funds_form_submit($form, &$form_state) {
 
   $order_wrapper->commerce_line_items[] = $line_item;
 
-
+  #deposit_order->type = 'commerce_funds_deposit';
   $deposit_order->data['type'] = 'commerce_funds_deposit';
   $deposit_order->data['notes'] = $form_state['values']['notes'];
 
   commerce_order_save($deposit_order);
 
-  drupal_goto('checkout/' . $deposit_order->order_id);
+ # drupal_goto('checkout/' . $deposit_order->order_id);
 }

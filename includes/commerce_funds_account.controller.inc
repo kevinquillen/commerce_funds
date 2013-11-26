@@ -26,7 +26,7 @@ class CommerceFundsAccountEntityController extends DrupalCommerceEntityControlle
     $values += array(
       'account_id' => NULL,
       'balance' => 0,
-      'currency_code' => variable_get('commerce_default_currency'),
+      'currency_code' => variable_get('commerce_enabled_currencies', array('USD' => 'USD')),
     );
 
     return parent::create($values);

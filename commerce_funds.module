@@ -39,32 +39,13 @@ function commerce_funds_permission() {
  * Implements hook_menu().
  */
 function commerce_funds_menu() {
-
-  $items['admin/commerce/funds'] = array(
-    'title' => 'Funds Management',
-    'description' => 'Administer Store Funds',
-    'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('access administration pages'),
-    'file path' => drupal_get_path('module', 'system'),
-    'file' => 'system.admin.inc',
-    'weight' => -15,
-  );
-
   $items['admin/commerce/config/funds'] = array(
-    'title' => 'Funds',
+    'title' => 'Funds Management',
     'description' => 'Configure Funds Settings',
     'page callback' => 'system_admin_menu_block_page',
     'access arguments' => array('administer funds'),
     'file path' => drupal_get_path('module', 'system'),
     'file' => 'system.admin.inc',
-    'weight' => -15,
-  );
-
-  $items['admin/commerce/funds/configure/fees'] = array(
-    'title' => 'Fees',
-    'page callback' => 'commerce_funds_configure_fees',
-    'access arguments' => array('administer funds'),
-    'type' => MENU_NORMAL_ITEM,
   );
 
   return $items;
@@ -190,8 +171,8 @@ function commerce_funds_account_load_by_user($account_user, $currency_code, $res
 /**
  * Returns an initialized payment transaction object.
  *
- * @param $method_id
- *   The method_id of the payment method for the transaction.
+ * @param $type
+ *   The type of the transaction.
  *
  * @return
  *   A transaction object with all default fields initialized.
@@ -278,7 +259,6 @@ function commerce_funds_transaction_delete_multiple($transaction_ids) {
  *   Commerce Price
  */
 function commerce_funds_credit($account_user, $amount) {
-
   $account = commerce_funds_account_load_by_user($account_user, $amount['currency_code']);
 
   if (!$account) {
@@ -307,7 +287,6 @@ function commerce_funds_credit($account_user, $amount) {
  *   Commerce Price
  */
 function commerce_funds_debit($account_user, $amount) {
-
   $account = commerce_funds_account_load_by_user($account_user, $amount['currency_code']);
 
   if (!$account) {
@@ -325,95 +304,13 @@ function commerce_funds_debit($account_user, $amount) {
   if (commerce_funds_transaction_save($transaction)) {
     commerce_funds_account_save($account);
   }
-
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function commerce_funds_view_transactions($form, &$form_state) {
-
-  $transactions = db_query("SELECT * FROM {commerce_funds_transactions}");
-
-  $types = array('Deposit', 'Transfer', 'Escrow Payment', 'Completed Escrow Payment', 'Cancelled Escrow Payment');
-
-  $header = array('Time', 'Type', 'User', 'Amount', 'Details');
-
-  $rows = array();
-
-  $saved_types = array();
-
-  if (array_key_exists('commerce_funds_filter_type', $_SESSION)) {
-    foreach ($_SESSION['commerce_funds_filter_type'] as $index) {
-      $saved_types[] = $types[$index];
-    }
-  }
-
-  foreach ($transactions as $transaction) {
-    if ((array_key_exists('commerce_funds_filter_type', $_SESSION) && in_array($transaction->type, $saved_types)) || !array_key_exists('commerce_funds_filter_type', $_SESSION)) {
-      $user = user_load($transaction->uid);
-      $to_user = $transaction->type == 'Transfer' ? user_load($transaction->reference) : array();
-      $rows[] = array(date('d/m/Y   g:i:s A', $transaction->created), $transaction->type, $user->mail, commerce_currency_format($transaction->amount, commerce_default_currency()), $transaction->type == 'Transfer' ? '<br />To: ' . $to_user->mail : '');
-    }
-  }
-
-  $form['filter_type'] = array(
-    '#type' => 'select',
-    '#title' => t('Type'),
-    '#options' => $types,
-    '#attributes' => array('multiple' => TRUE),
-    '#multiple' => TRUE,
-    '#size' => 5,
-    '#default_value' => array_key_exists('commerce_funds_filter_type', $_SESSION) ? $_SESSION['commerce_funds_filter_type'] : '',
-  );
-
-  $form['filter'] = array(
-    '#type' => 'submit',
-    '#value' => t('Filter'),
-  );
-
-  $form['reset'] = array(
-    '#type' => 'submit',
-    '#value' => t('Reset'),
-    '#suffix' => theme('table', array('header' => $header, 'rows' => $rows))
-  );
-
-  return $form;
-}
-
-function commerce_funds_view_transactions_submit($form, &$form_state) {
-  if ($form_state['values']['op'] == 'Filter') {
-    if (!empty($form_state['values']['filter_type']))
-      $_SESSION['commerce_funds_filter_type'] = $form_state['values']['filter_type']; else {
-      unset($_SESSION['commerce_funds_filter_type']);
-    }
-  }
-  elseif ($form_state['values']['op'] == 'Reset') {
-    unset($_SESSION['commerce_funds_filter_type']);
-  }
-
-  $form_state['redirect'] = 'admin/commerce/funds/view-transactions';
-}
-
+/**
+ * @todo: this should really be in a submodule - not everyone will utilize fees.
+ *
 
 function commerce_funds_configure_fees() {
-
   $payment_methods = commerce_payment_methods();
 
   $enabled_methods = array();
@@ -577,3 +474,4 @@ function commerce_funds_configure_fees_form_submit($form, &$form_state) {
 
   variable_set('commerce_funds_fees', $fees);
 }
+*/

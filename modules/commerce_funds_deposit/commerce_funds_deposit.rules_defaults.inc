@@ -7,9 +7,9 @@
 /**
  * Implements hook_default_rules_configuration().
  */
-function commerce_funds_default_rules_configuration() {
+function commerce_funds_deposit_default_rules_configuration() {
 
-  $rules = array();
+  /*$rules = array();
   $rule = rules_reaction_rule();
 
   $rule->label = t('Adds funds to balance when deposit is completed');
@@ -20,7 +20,7 @@ function commerce_funds_default_rules_configuration() {
     'commerce_order:select' => 'commerce-order',
   ));
 
-  $rules['commerce_funds_add_funds_to_balance'] = $rule;
+  $rules['commerce_funds_deposit_add_funds_to_balance'] = $rule;
 
-  return $rules;
+  return $rules;*/
 }

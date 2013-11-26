@@ -216,7 +216,7 @@ function commerce_funds_views_data() {
     'title' => t('Transaction Amount'),
     'help' => t('The transaction amount.'),
     'field' => array(
-      'handler' => 'views_handler_field_numeric',
+      'handler' => 'commerce_payment_handler_field_amount',
       'click sortable' => TRUE,
     ),
     'filter' => array(
@@ -224,6 +224,9 @@ function commerce_funds_views_data() {
     ),
     'sort' => array(
       'handler' => 'views_handler_sort',
+    ),
+    'argument' => array(
+      'handler' => 'views_handler_argument_numeric',
     ),
   );
 
